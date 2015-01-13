@@ -1,0 +1,17 @@
+{
+    "processing": "Por favor espere...",
+    "lengthMenu": "Mostrar &nbsp;_MENU_&nbsp; Registros",
+    "zeroRecords": "Ningun Registro",
+    "info": "Mostrando del _START_ al _END_ de _TOTAL_ Registros",
+    "infoEmpty": "Mostrando del 0 al 0 de 0 Registros",
+    "infoFiltered": "(Filtrada por _MAX_  Registros)",
+    "infoPostFix": "",
+    "search": "Buscar: ",
+    "url": "",
+    "paginate": {
+            "first":    "Primero",
+            "previous": "Anterior",
+            "next":     "Siguiente",
+            "last":     "&uacute;ltimo"
+    }
+}
