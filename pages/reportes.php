@@ -2,7 +2,9 @@
 include ("../header.php");
 include("../clases/mysql.php");
 $db = new MySQL();
-$archivo="reportes.php";
+
+$archivo=substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
+$nombre_pagina=trim(substr($archivo,0,+strrpos($archivo,".")));
 $archivo_ruta="pages/".$archivo;
 
 //SESION INICIADA
@@ -50,16 +52,26 @@ $filtrado=true;
 											
 		if($db->num_rows($consulta)>0){
 		  while($results = $db->fetch_array($consulta)){ 
+		   $lider_arr="";
+		   $pref="";
+		   
+		   $lideres_asignados=explode(",",$results['id_lider']);
+		   
+		   foreach ($lideres_asignados as $value) {
+			$lider_arr.=$pref.$db->getNombreLideres($value);
+			$pref=", ";
+			}	
 			echo "<tr>";
 			echo "<td>".$results['id']."</td>"; 
 			echo "<td>".utf8_encode($results['anfitrion'])."</td>";
 			echo "<td>".utf8_encode($results['dia'])."</td>"; 
 			echo "<td>".$results['telefono']."</td>"; 
-			echo "<td>".$results['id_lider']."</td>";
+			//echo "<td>".$results['id_lider']."</td>";
+			echo "<td>".utf8_encode($lider_arr)."</td>";
 			echo "<td>".$results['hora_inicia']." - ".$results['hora_finaliza']."</td>";
 			echo "<td>";
 			echo "<a class='btn btn-xs btn-success seleccionar_grupo'><span class='glyphicon glyphicon-ok'></span>";
-			echo "<input type='hidden' value='".$results['id']."|".utf8_encode($results['anfitrion'])."|".utf8_encode($db->getNombreLideres($results['id_lider']))."|".utf8_encode($results['dia'])."|".$results['hora_inicia']." - ".$results['hora_finaliza']."'/>";
+			echo "<input type='hidden' value='".$results['id']."|".utf8_encode($results['anfitrion'])."|".utf8_encode($lider_arr)."|".utf8_encode($results['dia'])."|".$results['hora_inicia']." - ".$results['hora_finaliza']."'/>";
 			echo "</a>";
 			echo "</td>";
 			echo "</tr>";
@@ -93,7 +105,7 @@ $filtrado=true;
 	<div class="col-md-12">
 		<table style="width:100%;">
 			<tr>
-				<td class="text-left"><h3 class="text-muted">Reporte de Grupos <small><?php if(isset($filtrado)){echo " (".$_POST['del']." / ".$_POST['al'].")";}?></small></h3></td>
+				<td class="text-left"><h3 class="text-muted"><?php echo $db->getNombrePagina($nombre_pagina);?> <small><?php if(isset($filtrado)){echo " (".$_POST['del']." / ".$_POST['al'].")";}?></small></h3></td>
 				<td class="text-right"><a id="volver" href="../"><span class="glyphicon glyphicon-log-out"></span> Volver</a></td>
 			</tr>
 		</table>

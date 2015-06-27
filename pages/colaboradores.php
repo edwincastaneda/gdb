@@ -1,7 +1,10 @@
 <?php include ("../header.php"); 
 include("../clases/mysql.php");
 $db = new MySQL();
-$archivo="servidores.php";
+
+
+$archivo=substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
+$nombre_pagina=trim(substr($archivo,0,+strrpos($archivo,".")));
 $archivo_ruta="pages/".$archivo;
 
 //SESION INICIADA
@@ -85,14 +88,14 @@ filtroColumnas(7);
 	<div class="col-md-12">
 		<table style="width:100%;">
 			<tr>
-				<td class="text-left"><h3 class="text-muted">Servidores</h3></td>
+				<td class="text-left"><h3 class="text-muted"><?php echo $db->getNombrePagina($nombre_pagina);?></h3></td>
 				<td class="text-right"><a id="volver" href="../"><span class="glyphicon glyphicon-log-out"></span> Volver</a></td>
 			</tr>
 		</table>
 	</div>
 </div>
 <div id="catalogo_form" class="row">
-<form method=post action="ctrl/ctrl_servidores.php">
+<form method=post action="ctrl/ctrl_<?php echo $archivo;?>">
 <table border=0 style="margin:0 auto; width:100%;">
 <tr>
     <td style="width:80px;" class="text-right">#: &nbsp;</td>
@@ -115,7 +118,7 @@ filtroColumnas(7);
 <tr>
 	<td class="text-right">Teléfono: &nbsp;</td>
 	<td>
-            <input maxlength="8" class="form-control input-sm numeric" placeholder="######## (8 dígitos)" type="text" name="telefono" value="<?php if(isset($edit[3])){echo $edit[3];}?>" required="">
+            <input maxlength="8" class="form-control input-sm numeric" placeholder="######## (8 dígitos)" type="text" name="telefono" value="<?php if(isset($edit[3])){echo $edit[3];}?>">
 	</td>
 </tr>
 <tr>
@@ -127,7 +130,7 @@ filtroColumnas(7);
 <tr>
 	<td class="text-right">Email: &nbsp;</td>
 	<td>
-	<input class="form-control input-sm" type="text" name="email" value="<?php if(isset($edit[5])){echo $edit[5];}?>" required="">
+	<input class="form-control input-sm" type="text" name="email" value="<?php if(isset($edit[5])){echo $edit[5];}?>">
 	</td>
 </tr>
 <tr>
@@ -158,7 +161,7 @@ filtroColumnas(7);
 	<td>
 		<div class="input-group">
 			<input type="text" class="form-control input-sm" type="text" id="nombre_facilitador" value="<?php if(isset($edit[8])){echo utf8_encode($db->getNombreFacilitadores($edit[8]));}?>" required="" readonly placeholder="NO SELECCIONADO"/>
-			<input type="hidden" id="id_facilitador" name="id_facilitador" value="<?php if(isset($edit[8])){echo $edit[8];}?>"/>
+			<input type="hidden" id="id_facilitador" name="id_facilitador" value="<?php if(isset($edit[8])){echo $edit[8];}else{ echo "0";}?>"/>
 			<span class="input-group-btn">
 			  <button class="btn btn-default btn-sm select-modal" type="button" data-toggle="modal" data-target="#facilitadoresModal"><span>&#9660;</span></button>
 			</span>
@@ -191,7 +194,11 @@ filtroColumnas(7);
 </form>
 </div>
 
+<ul class="list-group">
+  <li class="list-group-item">
 <b>Seleccione las columnas que desea visualizar:</b>
+</li>
+ <li class="list-group-item">
 <table class="table" id="catalogo_form">
     <tr>
         <td class="mostrarPermisos">#: &nbsp;</td>
@@ -215,13 +222,15 @@ filtroColumnas(7);
     </tr>
 
 </table>
+</li>
+</ul>
 <table class="display datos">
 <thead>
     <tr>
         <th class="head-0">#</th>
         <th class="head-1">Nombres</th>
         <th class="head-2">Apellidos</th>
-	<th class="head-3">Teléfono</th>
+		<th class="head-3">Teléfono</th>
         <th class="head-4">Celular</th>
         <th class="head-5">Email</th>
         <th class="head-6">Dirección</th>

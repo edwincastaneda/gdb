@@ -1,31 +1,53 @@
 <?php include ("../header.php"); 
 include("../clases/mysql.php");
 $db = new MySQL();
-$archivo="registrar-actividad.php";
-$archivo_ruta="pages/".$archivo;
 
+$archivo=substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
+$nombre_pagina=trim(substr($archivo,0,+strrpos($archivo,".")));
+$archivo_ruta="pages/".$archivo;
 //SESION INICIADA
 if(isset($_COOKIE['username']) && isset($_COOKIE['password']) && isset($_COOKIE['id_perfil'])){ 
 
 //PERMISOS PARA VER LA PAGINA
 if($db->validaPagina($_COOKIE['id_perfil'],$archivo_ruta)){
-    
 
 
 if(isset($_GET['id'])){
 $consultaEdit = $db->consulta("SELECT * FROM registrar_actividad WHERE id=".$_GET['id']);
 $edit = $db->fetch_row($consultaEdit);
 
-$consultaGrupo = $db->consulta("SELECT anfitrion, id_lider, dia, hora_inicia, hora_finaliza FROM grupos WHERE id=".$_GET['id']);
+$consultaGrupo = $db->consulta("SELECT anfitrion, id_lider, dia, hora_inicia, hora_finaliza, tipo FROM grupos WHERE id=".$edit[1]);
 $grupos = $db->fetch_row($consultaGrupo);
 }
 
 filtroColumnas(6);
 ?>
 <script type="text/javascript" charset="utf8" src="../libs/scripts.js"></script>
-
+<script>
+function validateForm() {
+    var x = document.forms["registro_form"]["id_grupo"].value;
+    if (x == null || x == "") {
+        alert("ERROR! Debe de seleccionar un grupo para registrar actividad.");
+        return false;
+    }
+}
+</script>
 <!-- Modal Grupos-->
 <div class="modal fade" id="gruposModal" tabindex="-1" role="dialog" aria-labelledby="gruposModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Cerrar</span></button>
+        <h4 class="modal-title" id="gruposModalLabel">Grupos</h4>
+      </div>
+      <div class="modal-body" id="body-modal-grupos"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Grupos-->
+<div class="modal fade" id="gruposModalLoad" tabindex="-1" role="dialog" aria-labelledby="gruposModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg">
     <div class="modal-content">
       <div class="modal-header">
@@ -38,6 +60,7 @@ filtroColumnas(6);
 			<tr>
                             <th>#</th>
                             <th>Anfitrión</th>
+							<th>Tipo</th>
                             <th>Día</th>
                             <th>Teléfono</th>
                             <th>Líder</th>
@@ -54,16 +77,32 @@ filtroColumnas(6);
 											
 		if($db->num_rows($consulta)>0){
 		  while($results = $db->fetch_array($consulta)){ 
+			$lider_arr="";
+			$pref="";
+			
+			$lideres_asignados=explode(",",$results['id_lider']);
+			
+			foreach ($lideres_asignados as $value) {
+			if($db->getNombreLideres($value)!=""){
+				$lider_arr.=$pref.$db->getNombreLideres($value);
+				}else{
+				$lider_arr.=$pref.$db->getNombreFacilitadores($value);
+				}
+				$pref=", ";
+			}
+			
 			echo "<tr>";
 			echo "<td>".$results['id']."</td>"; 
 			echo "<td>".utf8_encode($results['anfitrion'])."</td>";
+			echo "<td>".utf8_encode($db->getTipoGrupo($results['tipo']))."</td>";
 			echo "<td>".utf8_encode($results['dia'])."</td>"; 
 			echo "<td>".$results['telefono']."</td>"; 
-			echo "<td>".utf8_encode($db->getNombreLideres($results['id_lider']))."</td>";
+			//echo "<td>".utf8_encode($db->getNombreLideres($results['id_lider']))."</td>";
+			echo "<td>".utf8_encode($lider_arr)."</td>";
 			echo "<td>".$results['hora_inicia']." - ".$results['hora_finaliza']."</td>";
 			echo "<td>";
 			echo "<a class='btn btn-xs btn-success seleccionar_grupo'><span class='glyphicon glyphicon-ok'></span>";
-			echo "<input type='hidden' value='".$results['id']."|".utf8_encode($results['anfitrion'])."|".utf8_encode($db->getNombreLideres($results['id_lider']))."|".utf8_encode($results['dia'])."|".$results['hora_inicia']." - ".$results['hora_finaliza']."'/>";
+			echo "<input type='hidden' value='".$results['id']."|".utf8_encode($results['anfitrion'])."|".utf8_encode($lider_arr)."|".utf8_encode($results['dia'])."|".$results['hora_inicia']." - ".$results['hora_finaliza']."|".utf8_encode($db->getTipoGrupo($results['tipo']))."'/>";
 			echo "</a>";
 			echo "</td>";
 			echo "</tr>";
@@ -82,14 +121,14 @@ filtroColumnas(6);
 	<div class="col-md-12">
 		<table style="width:100%;">
 			<tr>
-				<td class="text-left"><h3 class="text-muted">Registrar Actividad</h3></td>
+				<td class="text-left"><h3 class="text-muted"><?php echo $db->getNombrePagina($nombre_pagina);?></h3></td>
 				<td class="text-right"><a id="volver" href="../"><span class="glyphicon glyphicon-log-out"></span> Volver</a></td>
 			</tr>
 		</table>
 	</div>
 </div>
 <div id="catalogo_form" class="row">
-<form method=post action="ctrl/ctrl_registrar-actividad.php">
+<form method="post" name="registro_form" action="ctrl/ctrl_registrar-actividad.php" onsubmit="return validateForm();">
 <table border=0 style="margin:0 auto; width:100%;">
 <tr>
     <td style="width:130px;" class="text-right">#: &nbsp;</td>
@@ -103,7 +142,7 @@ filtroColumnas(6);
             <div class="input-group">
                 <input type="text" class="form-control input-sm" type="text" id="id_grupo" name="id_grupo" value="<?php if(isset($edit[1])){echo $edit[1];}?>" required="" readonly placeholder="NO SELECCIONADO"/>
                 <span class="input-group-btn">
-                  <button class="btn btn-default btn-sm select-modal" type="button" data-toggle="modal" data-target="#gruposModal"><span>&#9660;</span></button>
+                  <button class="btn btn-default btn-sm select-modal" type="button" data-toggle="modal" data-target="#gruposModalLoad"><span>&#9660;</span></button>
                 </span>
             </div>
 	</td>
@@ -117,7 +156,29 @@ filtroColumnas(6);
 <tr class="info-grupo">
 	<td class="text-right">Líder: &nbsp;</td>
 	<td>
-	<input class="form-control input-sm" type="text" id="lider" value="<?php if(isset($grupos[1])){echo utf8_encode($db->getNombreLideres($grupos[1]));}?>" readonly>
+	<input class="form-control input-sm" type="text" id="lider" value="<?php //if(isset($grupos[1])){echo utf8_encode($db->getNombreLideres($grupos[1]));}
+	if(isset($grupos[1])){
+			$lider_arr="";
+			$pref="";
+			$lideres_asignados=explode(",",$grupos[1]);
+			   foreach ($lideres_asignados as $value) {
+			   if($db->getNombreLideres($value)!=""){
+				echo trim(utf8_encode($pref.$db->getNombreLideres($value)));
+				}else{
+				echo trim(utf8_encode($pref.$db->getNombreFacilitadores($value)));
+				}
+				$pref=", ";
+				}
+			}
+			?>
+	
+	" readonly>
+	</td>
+</tr>
+<tr class="info-grupo">
+	<td class="text-right">Tipo: &nbsp;</td>
+	<td>
+	<input class="form-control input-sm" type="text" id="tipo" value="<?php if(isset($grupos[5])){echo utf8_encode($db->getTipoGrupo($grupos[5]));}?>" readonly>
 	</td>
 </tr>
 <tr class="info-grupo">
@@ -161,7 +222,7 @@ filtroColumnas(6);
 	<td>
 		<div class="input-group input-group-sm">
 			<span class="input-group-addon">Q</span>
-			<input class="form-control input-sm numeric" placeholder="0.00 (solo digitos)" type="text" name="ofrenda" value="<?php if(isset($edit[6])){echo $edit[6];}?>" required="">
+			<input class="form-control input-sm numeric" placeholder="0.00" type="text" name="ofrenda" value="<?php if(isset($edit[6])){echo $edit[6];}?>" required="">
 		</div>
 	</td>
 </tr>
@@ -189,8 +250,11 @@ filtroColumnas(6);
 </table>
 </form>
 </div>
-
+<ul class="list-group">
+  <li class="list-group-item">
 <b>Seleccione las columnas que desea visualizar:</b>
+</li>
+ <li class="list-group-item">
 <table class="table" id="catalogo_form">
     <tr>
         <td class="mostrarPermisos">#: &nbsp;</td>
@@ -212,6 +276,8 @@ filtroColumnas(6);
     </tr>
 
 </table>
+</li>
+</ul>
 <table class="display datos">
 <thead>
     <tr>
@@ -235,7 +301,8 @@ if($db->num_rows($consulta)>0){
   while($results = $db->fetch_array($consulta)){ 
    echo "<tr>";
    echo "<td class='column-0'>".$results['id']."</td>"; 
-   echo "<td class='column-1'>".$results['id_grupo']."</td>";
+   //echo "<td class='column-1'>".$results['id_grupo']."</td>";
+   echo '<td><button class="btn btn-primary btn-xs" type="button" data-toggle="modal" value="'.$results["id_grupo"].'" id="mostrar-modal-grupo"><span>'.$results["id_grupo"].'</span></button></td>';
    echo "<td class='column-2'>".$results['fecha']."</td>"; 
    echo "<td class='column-3'>".$results['asistentes']."</td>";
    echo "<td class='column-4'>".$results['invitados']."</td>";

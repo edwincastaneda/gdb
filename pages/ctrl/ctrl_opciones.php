@@ -2,7 +2,7 @@
 include("../../clases/mysql.php");
 $db = new MySQL();
 if(isset($_POST['guardar'])){ 
-echo $sql="INSERT INTO opciones (nombre, titulo, ruta_php, tipo, descripcion, imagen_icono) VALUES('".$_POST['nombre']."','".utf8_decode($_POST['titulo'])."', '".urldecode($_POST['ruta_php'])."', '".$_POST['tipo']."', '".utf8_decode($_POST['descripcion'])."', '".urldecode($_POST['imagen_icono'])."')";
+$sql="INSERT INTO opciones (nombre, titulo, ruta_php, tipo, descripcion, imagen_icono) VALUES('".$_POST['nombre']."','".utf8_decode($_POST['titulo'])."', '".urldecode($_POST['ruta_php'])."', '".$_POST['tipo']."', '".utf8_decode($_POST['descripcion'])."', '".urldecode($_POST['imagen_icono'])."')";
 $consulta = $db->consulta($sql);
 header("location: ../opciones.php");
 }

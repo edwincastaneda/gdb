@@ -1,7 +1,10 @@
 <?php include ("../header.php");  
 include("../clases/mysql.php");
 $db = new MySQL();
-$archivo="opciones.php";
+
+
+$archivo=substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
+$nombre_pagina=trim(substr($archivo,0,+strrpos($archivo,".")));
 $archivo_ruta="pages/".$archivo;
 
 //SESION INICIADA
@@ -24,7 +27,7 @@ filtroColumnas(6);
 	<div class="col-md-12">
 		<table style="width:100%;">
 			<tr>
-				<td class="text-left"><h3 class="text-muted">Opciones</h3></td>
+				<td class="text-left"><h3 class="text-muted"><?php echo $db->getNombrePagina($nombre_pagina);?></h3></td>
 				<td class="text-right"><a id="volver" href="../"><span class="glyphicon glyphicon-log-out"></span> Volver</a></td>
 			</tr>
 		</table>

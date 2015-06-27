@@ -20,16 +20,35 @@ $(document).ready(function(){
 	var elem = datos_facilitador.split('|');
 	$('#id_facilitador').val(elem[0]);
 	$('#nombre_facilitador').val(elem[0]+" - "+elem[1]);
+	$('#nombre_lider').val('');
+	$('#id_lider').val('');
 	$('#facilitadoresModal').modal('hide');
 	getLideres();
 	});
 	
 	//MODAL DE LIDERES
-	$(document).on( "click", "a.seleccionar_lider", function() {
-	var datos_lider=$("input", this).val();
-	var elem = datos_lider.split('|');
-	$('#id_lider').val(elem[0]);
-	$('#nombre_lider').val(elem[0]+" - "+elem[1]);
+	$(document).on( "click", "#seleccionar_lider", function() {
+
+
+	var selected = [];
+	$('div#chkbox_lideres input[type=checkbox]').each(function() {
+	   if ($(this).is(":checked")) {
+		   selected.push($(this).attr('name'));
+	   }
+	   
+	});
+	var id_lider = [];
+	var nombre_lider = [];
+	for (var i=0; i<selected.length; i++) { 
+		elem = selected[i].split('|');	
+		id_lider.push(elem[0]);
+		nombre_lider.push(elem[0]+" - "+elem[1]);
+	}
+	$('#id_lider').val(id_lider);
+	//$('#nombre_lider').val(nombre_lider.toString().replace("," , ", "));
+	$('#nombre_lider').val(nombre_lider.toString().replace(/,/g , ", "));
+	
+	
 	$('#lideresModal').modal('hide');
 	});
         
@@ -42,7 +61,8 @@ $(document).ready(function(){
             $('#lider').val(elem[2]);
             $('#dia').val(elem[3]);
             $('#horario').val(elem[4]);
-            $('#gruposModal').modal('hide');
+			$('#tipo').val(elem[5]);
+            $('#gruposModalLoad').modal('hide');
 			$('#gruposTodosModal').modal('hide');
             afterSelectGrupo();
 	});
@@ -51,7 +71,10 @@ $(document).ready(function(){
 	//CARGAR TABLA DE LIDERES EN MODAL
 	function getLideres(){
 	$('#boton-select-lider').removeAttr('disabled');
-            $.post( "../libs/catalogos/getLideres.php", { id_facilitador: $("#id_facilitador").val()})
+            $.post( "../libs/catalogos/getLideres.php", { 
+			id_facilitador: $("#id_facilitador").val(),
+			selected: $("#id_lider").val()
+			})
                 .done(function( data ) {
                       $("#body-modal-lideres").html(data);
                       recargarDataTable();

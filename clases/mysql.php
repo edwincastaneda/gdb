@@ -5,9 +5,14 @@ class MySQL{
 
   public function MySQL(){ 
     if(!isset($this->conexion)){
-      $this->conexion = (mysql_connect("localhost","gdb","gdb2014"))
+	if($_SERVER['SERVER_NAME']=="gdb.elshaddai.net"){
+      $this->conexion = (mysql_connect("localhost","shaddai_gdb","3lShaddai2015"))
         or die(mysql_error());
-      mysql_select_db("gdb",$this->conexion) or die(mysql_error());
+		}else{
+		$this->conexion = (mysql_connect("localhost","root",""))
+        or die(mysql_error());
+		}
+      mysql_select_db("shaddai_gdb",$this->conexion) or die(mysql_error());
     }
   }
 
@@ -101,6 +106,15 @@ $sql="SELECT *
    return $retorna;
   }
   
+    public function getNombrePagina($nombre){
+   $retorna="";
+  		$consulta = $this->consulta("SELECT titulo FROM opciones WHERE nombre='".$nombre."'");
+		$result = $this->fetch_row($consulta);
+		$retorna=$result[0];
+  
+   return $retorna;
+  }
+  
 public function getNombreFacilitadores($id_facilitador){
   $sql="SELECT id, nombres, apellidos  
 		FROM servidores
@@ -122,6 +136,19 @@ public function getNombreLideres($id_lider){
 		$result = $this->fetch_row($consulta);
 		if($this->num_rows($consulta)>0){
 			$retorna=$result[0]." - ".$result[1]." ".$result[2];
+		}
+  
+   return $retorna;
+}
+
+public function getTipoGrupo($id_tipo_grupo){
+  $sql="SELECT id, nombre 
+		FROM tipos_grupos
+		WHERE id=".$id_tipo_grupo;
+  		$consulta = $this->consulta($sql);
+		$result = $this->fetch_row($consulta);
+		if($this->num_rows($consulta)>0){
+			$retorna=$result[1];
 		}
   
    return $retorna;

@@ -1,17 +1,18 @@
 {
+    "emptyTable":   	"Sin registros.",
     "processing": "Por favor espere...",
     "lengthMenu": "Mostrar &nbsp;_MENU_&nbsp; Registros",
-    "zeroRecords": "Ningun Registro",
-    "info": "Mostrando del _START_ al _END_ de _TOTAL_ Registros",
-    "infoEmpty": "Mostrando del 0 al 0 de 0 Registros",
-    "infoFiltered": "(Filtrada por _MAX_  Registros)",
+    "info": "Del <b class='b'>_START_</b> al <b class='b'>_END_</b> de <b class='b'>_TOTAL_</b> Registros",
+    "infoEmpty": "Del <b class='b'>0</b> al <b class='b'>0</b> de <b class='b'>0</b> Registros",
+    "infoFiltered": "(Filtrado de _MAX_  Registros)",
     "infoPostFix": "",
     "search": "Buscar: ",
+    "zeroRecords":  	"B&uacute;squeda sin resultados.",
     "url": "",
     "paginate": {
             "first":    "Primero",
             "previous": "Anterior",
             "next":     "Siguiente",
-            "last":     "&uacute;ltimo"
+            "last":     "&Uacute;ltimo"
     }
 }

@@ -20,8 +20,12 @@ $existeRes = $db->fetch_row($existe);
 }
 
 if(isset($_POST['actualizar'])){
-echo    $sql="UPDATE usuarios SET nombre='".$_POST['nombre']."', contrasena='".md5($_POST['contrasena'])."', id_perfil=".$_POST['id_perfil']." WHERE id=".$_POST['id']; 
-    $consulta = $db->consulta($sql);
+	if($_POST['contrasena']!=""){
+    $sql="UPDATE usuarios SET nombre='".$_POST['nombre']."', contrasena='".md5($_POST['contrasena'])."', id_perfil=".$_POST['id_perfil']." WHERE id=".$_POST['id']; 
+	}else{
+	$sql="UPDATE usuarios SET nombre='".$_POST['nombre']."', id_perfil=".$_POST['id_perfil']." WHERE id=".$_POST['id']; 
+    }
+	$consulta = $db->consulta($sql);
     header("location: ../usuarios.php");
 }
 

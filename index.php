@@ -19,7 +19,7 @@ $db = new MySQL();
 	<?php }
 	echo "</div>";
 	}else{
-	echo "<div style='margin-top:20px;' class='well well-lg'>No hay elementos disponibles para mostrarse para este usuario, contacte al administrador del sistema.</div>";
+	echo "<div style='margin-top:20px;' class='well well-lg'>No hay elementos disponibles para este perfil de usuario, contacte al administrador del sistema.</div>";
 	}	?>
 	
 	

@@ -2,7 +2,13 @@
 
 function host_url($f) { 
 	$server = $_SERVER['SERVER_NAME'];
-    echo "http://".$server ."/".$f."/"; 
+    //echo "http://".$server ."/".$f."/"; 
+	if($_SERVER['SERVER_NAME']=="gdb.elshaddai.net"){
+	echo "http://".$server ."/"; 
+	}else{
+	$pathInPieces = explode('/', $_SERVER['DOCUMENT_ROOT']);
+	echo "http://".$server ."/gdb/"; 
+	}
 } 
 
 function filtroColumnas($columnas) { 

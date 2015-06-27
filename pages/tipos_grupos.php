@@ -2,6 +2,7 @@
 include("../clases/mysql.php");
 $db = new MySQL();
 
+
 $archivo=substr($_SERVER["SCRIPT_NAME"],strrpos($_SERVER["SCRIPT_NAME"],"/")+1);
 $nombre_pagina=trim(substr($archivo,0,+strrpos($archivo,".")));
 $archivo_ruta="pages/".$archivo;
@@ -15,7 +16,7 @@ if($db->validaPagina($_COOKIE['id_perfil'],$archivo_ruta)){
 
 
 if(isset($_GET['id'])){
-$consultaEdit = $db->consulta("SELECT * FROM usuarios WHERE id=".$_GET['id']);
+$consultaEdit = $db->consulta("SELECT * FROM tipos_grupos WHERE id=".$_GET['id']);
 $edit = $db->fetch_row($consultaEdit);
 }
 ?>
@@ -32,7 +33,7 @@ $edit = $db->fetch_row($consultaEdit);
 	</div>
 </div>
 <div id="catalogo_form" class="row">
-<form method="post" action="ctrl/ctrl_usuarios.php">
+<form method="post" action="ctrl/ctrl_tipos_grupos.php">
 <table border=0 style="margin:0 auto; width:100%;">
 <tr>
     <td style="width:90px;" class="text-right">#: &nbsp;</td>
@@ -46,29 +47,7 @@ $edit = $db->fetch_row($consultaEdit);
 	<input class="form-control input-sm" type="text" name="nombre" value="<?php if(isset($edit[1])){echo $edit[1];}?>" required="">
 	</td>
 </tr>
-<tr>
-	<td class="text-right">Contrase&ntilde;a: &nbsp;</td>
-	<td>
-	<input class="form-control input-sm" type="password" name="contrasena" value="<?php //if(isset($edit[2])){echo $edit[2];}?>">
-	</td>
-</tr>
-<tr>
-	<td class="text-right">Perfil: &nbsp;</td>
-	<td>
-		<select style="width:100%;" class="form-control input-sm" name="id_perfil">
-		<?php $consulta = $db->consulta("SELECT id, nombre FROM perfiles");
-			if($db->num_rows($consulta)>0){
-				while($results = $db->fetch_array($consulta)){ 
-				if(isset($edit[3])&& $edit[3]==$results[0]){?>
-				<option value="<?php echo $results[0];?>" selected><?php echo utf8_encode($results[1]);?></option>
-				<?php }else{ ?>
-				<option value="<?php echo $results[0];?>"><?php echo utf8_encode($results[1]);?></option>
-			<?php }
-				}
-			}?>
-		</select>
-	</td>
-</tr>
+
 <tr class="text-right">
 	<td colspan=2 style="padding:10px 0 15px 0;">
 	<?php 
@@ -100,23 +79,17 @@ $edit = $db->fetch_row($consultaEdit);
     <tr>
         <th>#</th>
         <th>Nombre</th>
-        <th>Contraseña</th>
-        <th>Perfil</th>
         <th>Acciones</th>
     </tr>
 </thead>
 <tbody>
-<?php $consulta = $db->consulta("SELECT U.id, U.nombre, U.contrasena, P.nombre AS perfil
-									FROM usuarios U, perfiles P 
-									WHERE U.id_perfil=P.id ");
+<?php $consulta = $db->consulta("SELECT * FROM tipos_grupos");
 $acciones=$db->getAcciones($_COOKIE['id_perfil'],$archivo_ruta,2);									
 									
 if($db->num_rows($consulta)>0){
   while($results = $db->fetch_array($consulta)){ 
    echo "<tr><td>".$results['id']."</td>"; 
-   echo "<td>".$results['nombre']."</td>"; 
-   echo "<td>".$results['contrasena']."</td>"; 
-   echo "<td>".utf8_encode($results['perfil'])."</td>";
+   echo "<td>".utf8_encode($results['nombre'])."</td>";
    echo "<td>";
    for($i=0;$i<count($acciones);$i++){
    	   if($acciones[$i]['titulo']!=""){

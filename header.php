@@ -3,6 +3,7 @@
 <head>
 <?php include "libs/funciones.php";?>
 <meta charset="utf-8">
+<META NAME="ROBOTS" CONTENT="NOINDEX, NOFOLLOW">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Grupos de Bendición</title>
@@ -19,7 +20,7 @@
 <link rel="stylesheet" type="text/css" href="<?php host_url($f);?>css/comun.css">
 <link rel="stylesheet" type="text/css" href="<?php host_url($f);?>css/style.css">
 <link rel="stylesheet" type="text/css" href="<?php host_url($f);?>css/clockface.css">
-<link rel="stylesheet" type="text/css" href="<?php host_url($f);?>css/datepicker.css">
+<link rel="stylesheet" type="text/css" href="<?php host_url($f);?>css/datepicker3.css">
 
 <link rel="stylesheet" type="text/css" href="<?php host_url($f);?>css/dataTables.bootstrap.css">
 <link rel="stylesheet" type="text/css" href="<?php host_url($f);?>css/jquery.dataTables.css">
@@ -29,7 +30,7 @@
 
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/clockface.js"></script>
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/dataTables.bootstrap.js"></script>
- 
+
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/collapse.js"></script>
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/modal.js"></script>
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/transition.js"></script>
@@ -37,8 +38,9 @@
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/popover.js"></script>
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/jquery.numeric.js"></script>
 
-
 <script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/bootstrap-datepicker.js"></script>
+<script type="text/javascript" charset="utf8" src="<?php host_url($f);?>js/locales/bootstrap-datepicker.es.js"></script>
+
 
 <script type="text/javascript">
 $(window).load(function(){
@@ -62,7 +64,9 @@ $(document).ready( function () {
 	
 	//datepicker
 	$('.datepicker').datepicker({
-		format: 'yyyy-mm-dd'
+		format: 'yyyy-mm-dd',
+		language: 'es',
+		autoclose: true
 	}).on('changeDate', function(ev){
 		$(this).datepicker('hide');
 	});
@@ -73,7 +77,16 @@ $(document).ready( function () {
 
 
 </script>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
+  ga('create', 'UA-35071714-2', 'auto');
+  ga('send', 'pageview');
+
+</script>
 
 </head>
 <body>
